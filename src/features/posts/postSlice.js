@@ -4,34 +4,6 @@ import { sub } from "date-fns"
 
 const POSTS_URL = 'https://jsonplaceholder.typicode.com/posts'
 
-// const initialState = [
-//     {
-//         id: 1,
-//         title: 'This is the title of post 1',
-//         body: 'This is the body of the post numbere one. ',
-//         date: sub(new Date(), { minutes: 40 }).toISOString(),
-//         reactions: {
-//             thumbsUp: 0,
-//             wow: 0,
-//             heart: 0,
-//             rocket: 0,
-//             coffee: 0
-//         }
-//     },
-//     {
-//         id: 2,
-//         title: 'This is the title of post 2',
-//         body: 'This is the body of the post numbere two. ',
-//         date: sub(new Date(), { minutes: 20 }).toISOString(),
-//         reactions: {
-//             thumbsUp: 0,
-//             wow: 0,
-//             heart: 0,
-//             rocket: 0,
-//             coffee: 0
-//         }
-//     },
-// ]
 const initialState = {
     posts: [],
     status: 'idle',
@@ -44,6 +16,15 @@ export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
         return response.data
     } catch (error) {
         return error.message
+    }
+})
+
+export const addNewPost = createAsyncThunk('posts/addNewPost', async (initialPost) => {
+    try {
+        const response = await axios.post(POSTS_URL, initialPost)
+        return response.data
+    } catch (error) {
+        return error.data
     }
 })
 
@@ -88,6 +69,20 @@ const postSlice = createSlice({
             .addCase(fetchPosts.rejected, (state, action) => {
                 state.status = 'failed'
                 state.error = action.error.message
+            })
+            .addCase(addNewPost.fulfilled, (state, action) => {
+                action.payload.userId = Number(action.payload.userId)
+                action.payload.date = new Date().toISOString()
+                action.payload.reactions = {
+                    thumbsUp: 0,
+                    wow: 0,
+                    heart: 0,
+                    rocket: 0,
+                    coffee: 0
+                }
+
+                console.log(action.payload);
+                state.posts.push(action.payload)
             })
     }
 })

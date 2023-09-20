@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useDispatch, useSelector } from 'react-redux'
 import './post.css'
-import { addPost } from "../features/posts/postSlice"
+import { addNewPost, addPost } from "../features/posts/postSlice"
 import { nanoid } from '@reduxjs/toolkit'
 import { userSelector } from "../features/users/userSlice"
 
@@ -23,19 +23,30 @@ const AddPost = () => {
     const canSave = Boolean(title) && Boolean(userId) && Boolean(body)
 
 
-    const handleSumbit = e => {
+    // const handleSumbit = e => {
+    //     e.preventDefault()
+    //     dispatch(addPost({
+    //         id: nanoid(),
+    //         title,
+    //         userId,
+    //         body,
+    //         date: new Date().toISOString()
+    //     }))
+    // }
+
+    const handleSubmit = e => {
         e.preventDefault()
-        dispatch(addPost({
-            id: nanoid(),
+        console.log("submit");
+
+        dispatch(addNewPost({
             title,
-            userId,
             body,
-            date: new Date().toISOString()
+            userId
         }))
     }
 
     return (
-        <form className="add-form" onSubmit={handleSumbit}>
+        <form className="add-form" onSubmit={handleSubmit}>
             <h2>Add New Post</h2>
             <div className="form-group">
                 <label htmlFor="title">Post Title:</label>
