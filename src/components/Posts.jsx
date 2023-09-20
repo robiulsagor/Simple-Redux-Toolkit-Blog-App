@@ -2,27 +2,35 @@ import { useSelector } from "react-redux"
 import { postsSelector } from "../features/posts/postSlice"
 import './post.css'
 import UserInfo from "./UserInfo"
+import TimeAgo from "./TimeAgo"
+import Reactions from "./Reactions"
 
 const SinglePost = ({ post }) => {
-    console.log(post);
     return (
         <div className="single-post">
-            <h3>{post.title} </h3>
-            <p>
+            <h3 >{post.title} </h3>
+            <p className="post-body">
                 {post.body.substr(0, 50)}
             </p>
-            <UserInfo user={post?.userId} />
+            <div className="post-info">
+                <UserInfo userId={post?.userId} />
+                <TimeAgo timestamp={post.date} />
+            </div>
+
+            <Reactions reactions={post.reactions} postId={post.id} />
         </div>
     )
 }
 
 const Posts = () => {
     const posts = useSelector(postsSelector)
+    const orderedPosts = posts.slice().sort((a, b) => b.date.localeCompare(a.date))
+    console.log(orderedPosts);
 
     return (
         <div className="post-container">
             <h2>Posts:</h2>
-            {posts.map(post => (
+            {orderedPosts.map(post => (
                 <SinglePost key={post.id} post={post} />
             ))}
         </div>

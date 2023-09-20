@@ -2,12 +2,11 @@ import React from 'react'
 import { useSelector } from 'react-redux';
 import { userSelector } from '../features/users/userSlice';
 
-const UserInfo = ({ user }) => {
-    const getUser = useSelector(userSelector)
-
-    const uName = getUser.find(u => u.id == user)
+const UserInfo = ({ userId }) => {
+    const allUsers = useSelector(userSelector)
+    const getAuthor = allUsers.find(u => u.id == userId)
     return (
-        <small>by {user ? uName.name : 'Unknown Author'}</small>
+        <small>by {userId ? getAuthor.name : 'Unknown Author'}</small>
     )
 }
 

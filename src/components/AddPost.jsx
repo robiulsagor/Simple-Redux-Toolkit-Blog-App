@@ -12,12 +12,9 @@ const AddPost = () => {
     const [title, setTitle] = useState('')
     const [body, setBody] = useState('')
 
-    console.log(userId);
-
     const dispatch = useDispatch()
 
     const users = useSelector(userSelector)
-    console.log(users);
 
     const UserOpt = users.map(user => (
         <option key={user.id} value={user.id}>{user.name} </option>
@@ -32,7 +29,8 @@ const AddPost = () => {
             id: nanoid(),
             title,
             userId,
-            body
+            body,
+            date: new Date().toISOString()
         }))
     }
 
