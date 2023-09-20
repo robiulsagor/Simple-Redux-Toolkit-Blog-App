@@ -1,9 +1,11 @@
-import { useSelector } from "react-redux"
-import { postsSelector } from "../features/posts/postSlice"
+import { useDispatch, useSelector } from "react-redux"
+import { postsSelector, getPostsStatus, getPostsError, fetchPosts } from "../features/posts/postSlice"
 import './post.css'
 import UserInfo from "./UserInfo"
 import TimeAgo from "./TimeAgo"
 import Reactions from "./Reactions"
+import { useEffect } from "react"
+import { fetchUsers, userSelector } from "../features/users/userSlice"
 
 const SinglePost = ({ post }) => {
     return (
@@ -23,16 +25,41 @@ const SinglePost = ({ post }) => {
 }
 
 const Posts = () => {
+    const dispatch = useDispatch()
+
     const posts = useSelector(postsSelector)
+    const postsStatus = useSelector(getPostsStatus)
+    const postsError = useSelector(getPostsError)
+
+    // dispatch(fetchUsers())
+    // const getUsers = useSelector(userSelector)
+
+
+    useEffect(() => {
+        if (postsStatus == 'idle' && dispatch(fetchUsers())) {
+            dispatch(fetchPosts())
+        }
+    }, [postsStatus, dispatch])
+
+
     const orderedPosts = posts.slice().sort((a, b) => b.date.localeCompare(a.date))
-    console.log(orderedPosts);
+
+    let content;
+    if (postsStatus == 'loading') {
+        content = <h2>Loading...</h2>
+    } else if (postsStatus == 'success') {
+        content = orderedPosts.map(post => (
+            <SinglePost key={post.id} post={post} />
+        ))
+    } else if (postsStatus == 'error') {
+        content = <h2>Error..</h2>
+    }
+
 
     return (
         <div className="post-container">
             <h2>Posts:</h2>
-            {orderedPosts.map(post => (
-                <SinglePost key={post.id} post={post} />
-            ))}
+            {content}
         </div>
     )
 }
